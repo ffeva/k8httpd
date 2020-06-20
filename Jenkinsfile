@@ -7,8 +7,6 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Running build automation'
-                sh 'sudo service docker stop'
-                sh 'sudo service docker start'
             }
         }
         stage('Build Docker Image') {
