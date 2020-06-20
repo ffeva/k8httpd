@@ -1,0 +1,11 @@
+version: '3.0'
+services:
+  httpd:
+    container_name: httpd
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: httpd:1.0
+    restart: always
+    ports:
+      - 80:80
