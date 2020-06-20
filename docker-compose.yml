@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: httpd:1.0
+    image: dd-dockerreg.academy.grads.al-labs.co.uk:5000/httpd
     restart: always
     ports:
       - 80:80

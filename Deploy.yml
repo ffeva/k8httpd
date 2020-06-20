@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: httpd
-        image: httpd
+        image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
         ports:
         - containerPort: 80
         resources: {}
