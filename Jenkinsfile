@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = "dd-dockerreg.academy.grads.al-labs.co.uk:5000/httpd"
+        DOCKER_IMAGE_NAME = "172.31.26.247:5000/httpd"
     }
     stages {
         stage('Build') {
