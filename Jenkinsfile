@@ -16,8 +16,6 @@ pipeline {
             steps {
                 script {
                     app = docker.build(DOCKER_IMAGE_NAME)
-                    app.inside {
-                        sh 'echo Hello, World!'
                     }
                 }
             }
@@ -29,6 +27,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
+                        app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
                 }
