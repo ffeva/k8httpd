@@ -1,29 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    run: app
   name: httpd
+  labels:
+    app: httpd
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      io.kompose.service: httpd
-  strategy:
+      app: httpd
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        io.kompose.service: httpd
+        app: httpd
     spec:
       containers:
       - name: httpd
         image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
         ports:
-        - containerPort: 80
-        resources: {}
-      restartPolicy: Always
-status: {}
+        - containerPort: 8080
 
 ---
 apiVersion: v1
