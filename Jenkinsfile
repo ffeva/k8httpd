@@ -240,15 +240,11 @@ pipeline {
               configs: '/httpd/Deploy-canary.yml',
               enableConfigSubstitution: true
           )
-      }
-      cleanup {
           kubernetesDeploy (
               kubeconfigId: 'kubeconfig',
               configs: '/pc/Deploy-canary.yml',
               enableConfigSubstitution: true
           )
-      }
-      cleanup {
           kubernetesDeploy (
               kubeconfigId: 'kubeconfig',
               configs: '/wp/Deploy-canary.yml',
