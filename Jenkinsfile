@@ -28,7 +28,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
+                    docker.withRegistry("172.31.0.0/16") {
                         app.push("latest")
                     }
                 }
