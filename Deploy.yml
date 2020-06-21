@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: httpd
   labels:
-    app: httpd
+    app: app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: httpd
+      app: app
   template:
     metadata:
       labels:
-        app: httpd
+        app: app
     spec:
       containers:
       - name: httpd
@@ -25,7 +25,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: httpd
+    run: app
   name: httpd-svc
   annotations:
     haproxy.org/check: "enabled"
@@ -33,7 +33,7 @@ metadata:
     haproxy.org/load-balance: "roundrobin"
 spec:
   selector:
-    run: httpd
+    run: app
   ports:
   - name: httpd-port
     port: 80
