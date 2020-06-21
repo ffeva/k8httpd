@@ -27,6 +27,8 @@ spec:
         - containerPort: 80
         resources: {}
       restartPolicy: Always
+      imagePullSecrets:
+      - name: $KUBERNETES_SECRET_NAME
 status: {}
 
 ---
