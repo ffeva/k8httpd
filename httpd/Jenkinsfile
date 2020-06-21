@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     dir('httpd') {
-                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
+                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:30000') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                         }
