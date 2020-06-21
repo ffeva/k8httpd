@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('tcp://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
+                    docker.withRegistry('172.31.26.247:5000') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
