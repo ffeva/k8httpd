@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME_HTTPD = "dd/httpd"
         CANARY_REPLICAS = 0
-        KUBE_CONTROLLER_IP = "35.178.180.240"
+        KUBE_CONTROLLER_IP = "httpd.dev.dd-kube.academy.grads.al-labs.co.uk"
     }
     stages {
         stage('HTTPD Build') {

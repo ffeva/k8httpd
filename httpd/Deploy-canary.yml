@@ -9,8 +9,12 @@ spec:
   replicas: $CANARY_REPLICAS
   selector:
     matchLabels:
+<<<<<<< HEAD
       app: httpd
       track: canary
+=======
+      app: app
+>>>>>>> b4e79845f2f51f78a6d9edab56e144d0028ccd7e
   template:
     metadata:
       labels:
@@ -33,6 +37,7 @@ spec:
           requests:
             cpu: 200m
 
+<<<<<<< HEAD
 
 kind: Service
 apiVersion: v1
@@ -49,3 +54,39 @@ spec:
     nodePort: 30000
 
 ---
+=======
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app
+  name: httpd-svc
+  annotations:
+    haproxy.org/check: "enabled"
+    haproxy.org/forwarded-for: "enabled"
+    haproxy.org/load-balance: "roundrobin"
+spec:
+  selector:
+    app: app
+  ports:
+  - name: httpd-port
+    port: 80
+    protocol: TCP
+    targetPort: 8081
+
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: httpd-ingress
+spec:
+  rules:
+  - host: httpd.dev.dd-kube.academy.grads.al-labs.co.uk
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: httpd-svc
+          servicePort: 80
+>>>>>>> b4e79845f2f51f78a6d9edab56e144d0028ccd7e
