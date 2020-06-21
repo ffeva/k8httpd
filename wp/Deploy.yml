@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ./docker-compose.yml
+    kompose.version: 1.17.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service:
+  name: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: wordpress
+  strategy:
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: dd-dockerreg.academy.grads.al-labs.co.uk:5000/wordpress
+        ports:
+        - containerPort: 80
+        resources: {}
+      restartPolicy: Always
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: app
+  name: wp-svc
+  annotations:
+    haproxy.org/check: "enabled"
+    haproxy.org/forwarded-for: "enabled"
+    haproxy.org/load-balance: "roundrobin"
+spec:
+  selector:
+    run: app
+  ports:
+  - name: wp-port
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: wp-ingress
+spec:
+  rules:
+  - host: wp.dev.dd-kube.academy.grads.al-labs.co.uk
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: app
+          servicePort: 80
