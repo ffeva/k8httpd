@@ -33,7 +33,7 @@ metadata:
     haproxy.org/load-balance: "roundrobin"
 spec:
   selector:
-    run: httpd
+    app: httpd
   ports:
   - name: httpd-port
     port: 80
