@@ -6,12 +6,12 @@ pipeline {
         KUBE_CONTROLLER_IP = "35.178.180.240"
     }
     stages {
-        stage('PC Build') {
+        stage('HTTPD Build') {
             steps {
                 echo 'Running PC build automation'
             }
         }
-        stage('Build Docker Image') {
+        stage('Build HTTPD Docker Image') {
             when {
                 branch 'master'
             }
@@ -23,15 +23,17 @@ pipeline {
                 }
             }
         }
-        stage('Push Docker Image') {
+        stage('Push HTTPD Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 script {
+                    dir('httpd') {
                     docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
+                        }
                     }
                 }
             }
