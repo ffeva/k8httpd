@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = "172.31.26.247:5000/apache"
+        DOCKER_IMAGE_NAME = "dd-dockerreg.academy.grads.al-labs.co.uk:5000/apache"
     }
     stages {
         stage('Build') {
@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('172.31.26.247:5000') {
+                    docker.withRegistry('dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
