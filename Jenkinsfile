@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('http://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
+                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
                         dockerImage.push("${env.BUILD_NUMBER}")
                         dockerImage.push("latest")
                     }
