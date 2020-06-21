@@ -80,14 +80,13 @@ pipeline {
             }
         }
     }
-
-  post {
-      cleanup {
-          kubernetesDeploy (
-              kubeconfigId: 'kubeconfig',
-              configs: 'pc/Deploy-canary.yml',
-              enableConfigSubstitution: true
+    post {
+        cleanup {
+            kubernetesDeploy (
+                kubeconfigId: 'kubeconfig',
+                configs: 'pc/Deploy-canary.yml',
+                enableConfigSubstitution: true
           )
-      }
-  }
-}
+       }
+    }
+ }
