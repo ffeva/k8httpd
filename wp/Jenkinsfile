@@ -1,27 +1,27 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME_HTTPD = "dd/httpd"
+        DOCKER_IMAGE_NAME_WP = "dd/wp"
         CANARY_REPLICAS = 0
         KUBE_CONTROLLER_IP = "35.178.180.240"
     }
     stages {
-        stage('httpd Build') {
+        stage('WP Build') {
             steps {
                 echo 'Running HTTPD build automation'
             }
         }
-        stage('Build HTTPD Docker Image') {
+        stage('Build WP Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 script {
-                    dockerImage = docker.build(DOCKER_IMAGE_NAME_HTTPD)
+                    dockerImage = docker.build(DOCKER_IMAGE_NAME_WP)
                 }
             }
         }
-        stage('Push HTTPD Docker Image') {
+        stage('Push WP Docker Image') {
             when {
                 branch 'master'
             }
@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-        stage('HTTPD CanaryDeploy') {
+        stage('WP CanaryDeploy') {
             when {
                 branch 'master'
             }
@@ -44,12 +44,12 @@ pipeline {
             steps {
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'httpd/Deploy-canary.yml',
+                    configs: 'wp/Deploy-canary.yml',
                     enableConfigSubstitution: true
                 )
             }
         }
-        stage('HTTPD SmokeTest') {
+        stage('WP SmokeTest') {
             when {
                 branch 'master'
             }
@@ -66,7 +66,7 @@ pipeline {
                 }
             }
         }
-        stage('HTTPD DeployToProduction') {
+        stage('WP DeployToProduction') {
             when {
                 branch 'master'
             }
@@ -74,7 +74,7 @@ pipeline {
                 milestone(1)
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'httpd/Deploy.yml',
+                    configs: 'wp/Deploy.yml',
                     enableConfigSubstitution: true
                 )
             }
@@ -85,8 +85,9 @@ pipeline {
       cleanup {
           kubernetesDeploy (
               kubeconfigId: 'kubeconfig',
-              configs: 'httpd/Deploy-canary.yml',
+              configs: 'wp/Deploy-canary.yml',
               enableConfigSubstitution: true
+          )
       }
   }
 }
