@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     dir('httpd') {
-                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:30000') {
+                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                         }
@@ -61,7 +61,7 @@ pipeline {
                 script {
                     sleep (time: 5)
                     def response = httpRequest (
-                        url: "http://$KUBE_MASTER_IP:8081/",
+                        url: "http://$KUBE_MASTER_IP:30000/",
                         timeout: 30
                     )
                     if (response.status != 200) {
