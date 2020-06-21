@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE_NAME_PC = "dd/pc"
         DOCKER_IMAGE_NAME_WP = "dd/wp"
         CANARY_REPLICAS = 0
+        KUBE_CONTROLLER_IP = "35.178.180.240"
     }
     stages {
         stage('httpd Build') {
@@ -58,7 +59,7 @@ pipeline {
                 script {
                     sleep (time: 5)
                     def response = httpRequest (
-                        url: "http://$KUBE_MASTER_IP:8081/",
+                        url: "http://$KUBE_CONTROLLER_IP:8081/",
                         timeout: 30
                     )
                     if (response.status != 200) {
@@ -133,7 +134,7 @@ pipeline {
                 script {
                     sleep (time: 5)
                     def response = httpRequest (
-                        url: "http://$KUBE_MASTER_IP:8081/",
+                        url: "http://$KUBE_CONTROLLER_IP:8081/",
                         timeout: 30
                     )
                     if (response.status != 200) {
@@ -208,7 +209,7 @@ pipeline {
                 script {
                     sleep (time: 5)
                     def response = httpRequest (
-                        url: "http://$KUBE_MASTER_IP:8081/",
+                        url: "http://$KUBE_CONTROLLER_IP:8081/",
                         timeout: 30
                     )
                     if (response.status != 200) {
