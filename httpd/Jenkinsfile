@@ -6,35 +6,35 @@ pipeline {
         KUBE_CONTROLLER_IP = "35.178.180.240"
     }
     stages {
-        stage('httpd Build') {
+        stage('PC Build') {
             steps {
-                echo 'Running HTTPD build automation'
+                echo 'Running PC build automation'
             }
         }
-        stage('Build HTTPD Docker Image') {
+        stage('Build Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 script {
-                    dockerImage = docker.build(DOCKER_IMAGE_NAME_HTTPD)
+                    app = docker.build(DOCKER_IMAGE_NAME_HTTPD)
                 }
             }
         }
-        stage('Push HTTPD Docker Image') {
+        stage('Push Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 script {
                     docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
-                        dockerImage.push("${env.BUILD_NUMBER}")
-                        dockerImage.push("latest")
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
                     }
                 }
             }
         }
-        stage('HTTPD CanaryDeploy') {
+        stage('CanaryDeploy') {
             when {
                 branch 'master'
             }
@@ -49,7 +49,7 @@ pipeline {
                 )
             }
         }
-        stage('HTTPD SmokeTest') {
+        stage('SmokeTest') {
             when {
                 branch 'master'
             }
@@ -57,7 +57,7 @@ pipeline {
                 script {
                     sleep (time: 5)
                     def response = httpRequest (
-                        url: "http://$KUBE_CONTROLLER_IP:8081/",
+                        url: "http://$KUBE_MASTER_IP:8081/",
                         timeout: 30
                     )
                     if (response.status != 200) {
@@ -66,7 +66,7 @@ pipeline {
                 }
             }
         }
-        stage('HTTPD DeployToProduction') {
+        stage('DeployToProduction') {
             when {
                 branch 'master'
             }
@@ -80,13 +80,13 @@ pipeline {
             }
         }
     }
-
-  post {
-      cleanup {
-          kubernetesDeploy (
-              kubeconfigId: 'kubeconfig',
-              configs: 'httpd/Deploy-canary.yml',
-              enableConfigSubstitution: true
-      }
-  }
+    post {
+        cleanup {
+            kubernetesDeploy (
+                kubeconfigId: 'kubeconfig',
+                configs: 'httpd/Deploy-canary.yml',
+                enableConfigSubstitution: true
+            )
+        }
+    }
 }
