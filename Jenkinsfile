@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = "dd-dockerreg.academy.grads.al-labs.co.uk:5000/apache"
+        DOCKER_IMAGE_NAME = "dd/httpd"
     }
     stages {
         stage('Build') {
@@ -37,7 +37,6 @@ pipeline {
                 branch 'master'
             }
             steps {
-                input 'Deploy to Production?'
                 milestone(1)
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
