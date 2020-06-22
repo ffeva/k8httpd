@@ -65,4 +65,4 @@ spec:
       - path: /
         backend:
           serviceName: httpd-svc
-          servicePort: 8080
+          servicePort: 80

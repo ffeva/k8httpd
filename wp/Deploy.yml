@@ -65,4 +65,4 @@ spec:
       - path: /
         backend:
           serviceName: wp-svc
-          servicePort: 8080
+          servicePort: 80
