@@ -37,8 +37,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: app
-  name: httpd-svc
+    app: httpd
+  name: httpd-svc-canary
   annotations:
     haproxy.org/check: "enabled"
     haproxy.org/forwarded-for: "enabled"
@@ -47,7 +47,7 @@ spec:
   selector:
     app: httpd
   ports:
-  - name: port-1
+  - name: port-2
     port: 80
     protocol: TCP
     targetPort: 8080
@@ -56,7 +56,7 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: httpd-ingress
+  name: httpd-ingress-canary
 spec:
   rules:
   - host: canary.httpd.dev.dd-kube.academy.grads.al-labs.co.uk
@@ -64,5 +64,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: httpd-svc
+          serviceName: httpd-svc-canary
           servicePort: 80

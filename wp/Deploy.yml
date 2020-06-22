@@ -1,40 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f ./docker-compose.yml
-    kompose.version: 1.17.0 (HEAD)
-  creationTimestamp: null
+  name: wp-deployment
   labels:
-    io.kompose.service:
-  name: wordpress
+    app: wp
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      io.kompose.service: wordpress
-  strategy:
+      app: wp
+      track: stable
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        io.kompose.service: wordpress
+        app: wp
+        track: stable
     spec:
       containers:
-      - name: wordpress
-        image: dd-dockerreg.academy.grads.al-labs.co.uk:5000/wordpress
+      - name: wp
+        image: $DOCKER_IMAGE_NAME_WP:$BUILD_NUMBER
         ports:
-        - containerPort: 80
-        resources: {}
-      restartPolicy: Always
-status: {}
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          timeoutSeconds: 1
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 200m
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: app
+    app: wp
   name: wp-svc
   annotations:
     haproxy.org/check: "enabled"
@@ -42,9 +45,9 @@ metadata:
     haproxy.org/load-balance: "roundrobin"
 spec:
   selector:
-    run: app
+    app: wp
   ports:
-  - name: wp-port
+  - name: port-5
     port: 80
     protocol: TCP
     targetPort: 8080
@@ -61,5 +64,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: app
-          servicePort: 80
+          serviceName: wp-svc
+          servicePort: 8080
