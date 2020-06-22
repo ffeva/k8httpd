@@ -3,38 +3,42 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME_WP = "dd/wp"
         CANARY_REPLICAS = 0
-        KUBE_CONTROLLER_IP = "35.178.180.240"
+        KUBE_CONTROLLER_IP = "wp.dev.dd-kube.academy.grads.al-labs.co.uk"
     }
     stages {
-        stage('WP Build') {
+        stage('HTTPD Build') {
             steps {
-                echo 'Running HTTPD build automation'
+                echo 'Running PC build automation'
             }
         }
-        stage('Build WP Docker Image') {
+        stage('Build HTTPD Docker Image') {
             when {
                 branch 'master'
             }
             steps {
                 script {
-                    dockerImage = docker.build(DOCKER_IMAGE_NAME_WP)
-                }
-            }
-        }
-        stage('Push WP Docker Image') {
-            when {
-                branch 'master'
-            }
-            steps {
-                script {
-                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
-                        dockerImage.push("${env.BUILD_NUMBER}")
-                        dockerImage.push("latest")
+                    dir('wp') {
+                    app = docker.build(DOCKER_IMAGE_NAME_WP)
                     }
                 }
             }
         }
-        stage('WP CanaryDeploy') {
+        stage('Push HTTPD Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    dir('wp') {
+                    docker.withRegistry('https://dd-dockerreg.academy.grads.al-labs.co.uk:5000') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                        }
+                    }
+                }
+            }
+        }
+        stage('CanaryDeploy') {
             when {
                 branch 'master'
             }
@@ -49,7 +53,7 @@ pipeline {
                 )
             }
         }
-        stage('WP SmokeTest') {
+        stage('SmokeTest') {
             when {
                 branch 'master'
             }
@@ -57,7 +61,7 @@ pipeline {
                 script {
                     sleep (time: 5)
                     def response = httpRequest (
-                        url: "http://$KUBE_CONTROLLER_IP:8081/",
+                        url: "https://$KUBE_CONTROLLER_IP:80/",
                         timeout: 30
                     )
                     if (response.status != 200) {
@@ -66,7 +70,7 @@ pipeline {
                 }
             }
         }
-        stage('WP DeployToProduction') {
+        stage('DeployToProduction') {
             when {
                 branch 'master'
             }
@@ -80,14 +84,13 @@ pipeline {
             }
         }
     }
-
-  post {
-      cleanup {
-          kubernetesDeploy (
-              kubeconfigId: 'kubeconfig',
-              configs: 'wp/Deploy-canary.yml',
-              enableConfigSubstitution: true
-          )
-      }
-  }
+    post {
+        cleanup {
+            kubernetesDeploy (
+                kubeconfigId: 'kubeconfig',
+                configs: 'wp/Deploy-canary.yml',
+                enableConfigSubstitution: true
+            )
+        }
+    }
 }
