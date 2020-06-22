@@ -3,15 +3,15 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME_PC = "dd/pc"
         CANARY_REPLICAS = 0
-        KUBE_CONTROLLER_IP = "pc.dev.dd-kube.academy.grads.al-labs.co.uk"
+        KUBE_CONTROLLER_IP = "canary.pc.dev.dd-kube.academy.grads.al-labs.co.uk"
     }
     stages {
-        stage('HTTPD Build') {
+        stage('PC Build') {
             steps {
                 echo 'Running PC build automation'
             }
         }
-        stage('Build HTTPD Docker Image') {
+        stage('Build PC Docker Image') {
             when {
                 branch 'master'
             }
@@ -23,7 +23,7 @@ pipeline {
                 }
             }
         }
-        stage('Push HTTPD Docker Image') {
+        stage('Push PC Docker Image') {
             when {
                 branch 'master'
             }

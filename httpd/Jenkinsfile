@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('HTTPD Build') {
             steps {
-                echo 'Running PC build automation'
+                echo 'Running HTTPD build automation'
             }
         }
         stage('Build HTTPD Docker Image') {
