@@ -1,24 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+  name: httpd-deployment
   labels:
-    app: app
+    app: httpd
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: app
+      app: httpd
+      track: stable
   template:
     metadata:
       labels:
-        app: app
+        app: httpd
+        track: stable
     spec:
       containers:
       - name: httpd
         image: $DOCKER_IMAGE_NAME_HTTPD:$BUILD_NUMBER
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          timeoutSeconds: 1
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 200m
 
 ---
 apiVersion: v1
@@ -33,12 +45,12 @@ metadata:
     haproxy.org/load-balance: "roundrobin"
 spec:
   selector:
-    app: app
+    app: httpd
   ports:
-  - name: httpd-port
+  - name: port-1
     port: 80
     protocol: TCP
-    targetPort: 8081
+    targetPort: 8080
 
 ---
 apiVersion: networking.k8s.io/v1beta1
@@ -53,4 +65,4 @@ spec:
       - path: /
         backend:
           serviceName: httpd-svc
-          servicePort: 8081
+          servicePort: 8080
